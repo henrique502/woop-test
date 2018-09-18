@@ -1,0 +1,59 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Woop Test"
+  description: |
+    Teste para Desenvolvedor(a) Backend do Woop Sicredi
+
+    Produção: api.wooptest.com
+
+    Homologação: api.homolog.wooptest.com
+
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /user:
+    get:
+      summary: Lista todos os usuários.
+      responses:
+        200:
+          description: Array com todos usuários em forma de objeto
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: sempre true em caso de sucesso
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/user'
+
+
+definitions:
+  userStatus:
+    type: number
+    description: Status de um user
+    enum: &userStatus
+      - 0 - valid
+      - 1 - deleted
+
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/userStatus'
+      createdAt:
+        type: number
+      updatedAt:
+        type: number
+      canceledAt:
+        type: number
