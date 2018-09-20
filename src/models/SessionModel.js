@@ -1,7 +1,12 @@
 const { knex } = require('../config/db');
 const userType = require('../types/user');
 
-class UserModel {
+class SessionModel {
+  static insert(data) {
+    return knex('session')
+      .insert(data)
+      .returning('id');
+  }
 
   static list() {
     return knex
@@ -50,4 +55,4 @@ class UserModel {
 
 }
 
-module.exports = UserModel;
+module.exports = SessionModel;

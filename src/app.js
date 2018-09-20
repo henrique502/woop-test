@@ -14,13 +14,10 @@ const Settings = require('./config/Settings');
 const Logger = require('./helpers/Logger');
 
 /* Routes */
-const userRoutes = require('./routes/user');
+const sessionRoutes = require('./routes/session');
 
 /* Express initialization */
 const app = express();
-
-/* Logger */
-const LoggerConfig = require('./config/LoggerConfig');
 
 /* Express utilites */
 app.use(helmet());
@@ -30,9 +27,6 @@ app.use(i18n.init);
 app.use(bodyParser.json({
   limit: process.env.BODY_LIMIT,
 }));
-
-/* Log express request and response */
-LoggerConfig.expressRequest(app);
 
 /* Status endpoint */
 app.get(['/', '/status'], async (req, res) => {
@@ -46,10 +40,7 @@ app.get(['/', '/status'], async (req, res) => {
 });
 
 /* Instatiate routes */
-app.use('/user', userRoutes);
-
-/* Log errors */
-LoggerConfig.expressError(app);
+app.use('/session', sessionRoutes);
 
 app.all('*', (req, res) => {
   res.status(404).send({ success: false, code: '404' });
@@ -58,7 +49,6 @@ app.all('*', (req, res) => {
 debug('load settings');
 (async () => {
   await Settings.load();
-  await LoggerConfig.init();
 
   debug('Starting server');
   app.listen(process.env.PORT, () => {

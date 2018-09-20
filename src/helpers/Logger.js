@@ -1,42 +1,35 @@
-const winston = require('winston');
-
 /* Logger use RFC5424 */
 class Logger {
-
-  static emerg(...emerg) {
-    winston.log('emerg', ...emerg);
+  static emerg(emerg) {
+    console.error('emerg', emerg);
   }
 
-  static alert(...alert) {
-    winston.log('alert', ...alert);
+  static alert(alert) {
+    console.warn('alert', alert);
   }
 
-  static crit(...crit) {
-    winston.log('crit', ...crit);
+  static crit(crit) {
+    console.error('crit', crit);
   }
 
-  static error(...error) {
-    winston.log('error', ...error);
+  static error(error) {
+    console.log('error', error);
   }
 
-  static warning(...warning) {
-    winston.log('warning', ...warning);
+  static warning(warning) {
+    console.error('warning', warning);
   }
 
-  static notice(...notice) {
-    winston.log('notice', ...notice);
+  static notice(notice) {
+    console.log('notice', notice);
   }
 
-  static info(...info) {
-    winston.log('info', ...info);
+  static info(info) {
+    console.log('info', info);
   }
 
-  static blacklists(req, list = []) {
-    req._routeBlacklists.body = list; // eslint-disable-line
-  }
-
-  static throw(res, code, ...args) {
-    this.error(...args);
+  static throw(res, code, args) {
+    Logger.error(args);
     res.status(500).send({ success: false, code, message: res.__('helpers.logger.throw') });
   }
 }

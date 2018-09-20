@@ -1,13 +1,19 @@
 const Logger = require('../helpers/Logger');
-const UserService = require('../services/UserService');
+const SessionService = require('../services/SessionService');
 
-class UserController {
+class SessionController {
 
-  static async list(req, res) {
+  static async post(req, res) {
     try {
-      const rows = await UserService.list();
+      const session_id = await SessionService.startNewSession({
+        name: req.joi.body.name,
+        minutes: req.joi.body.minutes,
+      });
 
-      res.send({ success: true, data: rows });
+      res.send({
+        success: true,
+        data: { session_id },
+      });
     } catch (err) {
       Logger.throw(res, '3272358416', err);
     }
@@ -32,7 +38,7 @@ class UserController {
     }
   }
 
-  static async post(req, res) {
+  static async vote(req, res) {
     const data = {
       name: req.body.name.trim(),
     };
@@ -94,4 +100,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+module.exports = SessionController;
