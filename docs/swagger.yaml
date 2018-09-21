@@ -16,12 +16,15 @@ consumes:
 produces:
   - application/json
 paths:
-  /user:
-    get:
-      summary: Lista todos os usuários.
+  "/session":
+    post:
+      summary: Cria uma nova sessão.
+      parameters:
+      - in: "body"
+        name: "body"
       responses:
         200:
-          description: Array com todos usuários em forma de objeto
+          description: Resultado
           schema:
             type: object
             properties:
@@ -29,31 +32,64 @@ paths:
                 type: boolean
                 description: sempre true em caso de sucesso
               data:
-                type: array
-                items:
-                  $ref: '#/definitions/user'
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    example: "3909"
 
+  "/session/{session_id}":
+    get:
+      summary: Retorna dados da sessão.
+      responses:
+        200:
+          description: Array com todos usuários em forma de objeto
+          parameters:
+          - name: "session_id"
+            in: "path"
+            description: "ID da sessão"
+            required: true
+            type: "integer"
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: sempre true em caso de sucesso
+              data:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    required: true
+                    example: "3909"
 
-definitions:
-  userStatus:
-    type: number
-    description: Status de um user
-    enum: &userStatus
-      - 0 - valid
-      - 1 - deleted
-
-  user:
-    type: object
-    properties:
-      id:
-        type: string
-      name:
-        type: string
-      status:
-        $ref: '#/definitions/userStatus'
-      createdAt:
-        type: number
-      updatedAt:
-        type: number
-      canceledAt:
-        type: number
+  "/session/{session_id}/vote":
+    post:
+      summary: Lista todos os usuários.
+      parameters:
+      - name: "session_id"
+        in: "path"
+        description: "ID da sessão"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          type: object
+          properties:
+            session_id:
+              type: string
+              required: true
+              example: "3909"
+            option:
+              type: string
+              enum:
+                - "YES"
+                - "NO"
+              required: true
+              example: "YES"
+      responses:
+        204:
+          description: Voto realizado com sucesso.
