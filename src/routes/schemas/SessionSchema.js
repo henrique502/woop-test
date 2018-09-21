@@ -6,7 +6,7 @@ class SessionSchema extends RouteValidator {
   static get get() {
     const schema = {
       params: Joi.object().keys({
-        sessionId: Joi.number().integer().required(),
+        session_id: Joi.number().integer().required(),
       }),
     };
 
@@ -33,7 +33,7 @@ class SessionSchema extends RouteValidator {
   static get vote() {
     const schema = {
       params: Joi.object().keys({
-        sessionId: Joi.number().integer().required(),
+        session_id: Joi.number().integer().required(),
       }),
       body: Joi.object().keys({
         associate_id: Joi.number()

@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `session` (
 CREATE TABLE IF NOT EXISTS `session_vote` (
   `session_id` BIGINT(20) UNSIGNED NOT NULL,
   `associate_id` BIGINT(20) UNSIGNED NOT NULL,
-  `active` ENUM('YES', 'NO') NOT NULL,
+  `option` ENUM('YES', 'NO') NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_session_vote_session_id FOREIGN KEY (`session_id`) REFERENCES `session`(`id`),
@@ -45,6 +45,15 @@ CREATE TABLE IF NOT EXISTS `session_vote` (
 ) ENGINE = InnoDB;
 
 
-INSERT INTO `woop`.`settings` (`name`, `type`, `value`) VALUES
-('CRON_SESSION_CLOSE', 'STRING', '* * * * *');
+INSERT INTO `settings` (`name`, `type`, `value`) VALUES
+('AUTO_CLOSE_SESSION_JOB', 'STRING', '* * * * *');
+
+INSERT INTO `associate` (`id`, `name`) VALUES
+('1', 'Henrique'),
+('2', 'Roberto'),
+('3', 'Fernanda'),
+('4', 'Ana'),
+('5', 'Lucas');
+
+
 

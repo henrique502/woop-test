@@ -9,6 +9,6 @@ router.get('/:session_id', SessionSchema.get, SessionController.get);
 /* POST /session */
 router.post('/', SessionSchema.post, SessionController.post);
 /* POST /session/:session_id/vote */
-router.post('/:session_id/vote', SessionSchema.vote, SessionController.post);
+router.post('/:session_id/vote', SessionSchema.vote, SessionController.vote);
 
 module.exports = router;
