@@ -4,6 +4,7 @@ const SessionModel = require('../models/SessionModel');
 const AssociateModel = require('../models/AssociateModel');
 const SessionVoteModel = require('../models/SessionVoteModel');
 const { YES, NO } = require('../types/boolean');
+const { DRAW } = require('../types/session');
 const { toUnixEpoch } = require('../helpers/Datetime');
 
 class SessionService {
@@ -25,6 +26,9 @@ class SessionService {
   }
 
   static vote({ session_id, associate_id, option }) {
+    const now = moment.utc()
+      .format('YYYY-MM-DD HH:mm:ss');
+
     return knex.transaction(async (trx) => {
       const session = await SessionModel.get({ id: session_id })
         .transacting(trx);
@@ -36,7 +40,7 @@ class SessionService {
         }
       }
 
-      if (session.active === NO) {
+      if (session.active === NO || now > session.end_at) {
         return {
           status: false,
           code: 'session_close',
@@ -71,7 +75,7 @@ class SessionService {
         option,
       }).transacting(trx);
 
-      return { status: true };
+      return { success: true };
     });
   }
 
@@ -85,48 +89,60 @@ class SessionService {
     }
 
     const votes = await SessionVoteModel.getVotesAndAssiciates(session.id);
-    const size = votes.length;
-    const data = {
+    return {
       name: session.name,
       active: session.active === YES,
       end_at: toUnixEpoch(session.end_at),
       start_at: toUnixEpoch(session.start_at),
       resume: {
-        result: null,
-        yes: 0,
-        no: 0,
+        result: session.result,
+        yes: session.yes,
+        no: session.no,
       },
-      votes: [],
+      votes,
     };
-
-    if (size > 0) {
-      for (let i = 0; i < size; i += 1) {
-        data.votes.push(votes[i]);
-
-        if (votes[i].option === YES) {
-          data.resume.yes += 1;
-        } else {
-          data.resume.no += 1;
-        }
-      }
-
-      if (session.active === NO) {
-        if (data.resume.yes === data.resume.no) {
-          data.resume.result = 'DRAW';
-        } else {
-          data.resume.result = data.resume.yes > data.resume.no ? 'YES' : 'NO';
-        }
-      }
-    }
-
-    return data;
   }
 
-  static async autoCloseSession() {
+  static autoCloseSession() {
     const now = moment.utc()
       .format('YYYY-MM-DD HH:mm:ss');
 
-    await SessionModel.closeSessionByDate(now);
+    return knex.transaction(async (trx) => {
+      const sessions = await SessionModel.getSessionsToClose(now)
+        .forUpdate()
+        .transacting(trx);
+
+      const querys = sessions.map(async (session) => {
+        const votes = await SessionVoteModel.getVotesAndAssiciates(session.id)
+          .transacting(trx);
+        const size = votes.length;
+        const data = {
+          active: NO,
+          result: DRAW,
+          yes: 0,
+          no: 0,
+        };
+
+        if (size > 0) {
+          for (let i = 0; i < size; i += 1) {
+            if (votes[i].option === YES) {
+              data.yes += 1;
+            } else {
+              data.no += 1;
+            }
+          }
+
+          if (data.yes !== data.no) {
+            data.result = data.yes > data.no ? 'YES' : 'NO';
+          }
+        }
+
+        return SessionModel.update([session.id], data)
+          .transacting(trx);
+      });
+
+      await Promise.all(querys);
+    });
   }
 }
 
