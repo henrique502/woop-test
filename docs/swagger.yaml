@@ -1,27 +1,44 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: Woop Test"
+  title: "Woop Test"
   description: |
     Teste para Desenvolvedor(a) Backend do Woop Sicredi
+    PS: wooptest.com não existe é só para documentação.
 
     Produção: api.wooptest.com
-
     Homologação: api.homolog.wooptest.com
 
+host: "developers.wooptest.com"
 schemes:
   - https
 consumes:
   - application/json
 produces:
   - application/json
+tags:
+- name: "Sessão"
+  description: "Criação, leitura e votação."
 paths:
   "/session":
     post:
+      tags:
+        - "Sessão"
       summary: Cria uma nova sessão.
       parameters:
-      - in: "body"
-        name: "body"
+        - in: "body"
+          name: "body"
+          schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "Nome da sessão"
+                minutes:
+                  type: integer
+                  example: 60
       responses:
         200:
           description: Resultado
@@ -37,59 +54,164 @@ paths:
                   session_id:
                     type: string
                     example: "3909"
+                    description: ID da sessão
+        400:
+          $ref: "#/definitions/bad_request"
 
   "/session/{session_id}":
     get:
+      tags:
+        - "Sessão"
       summary: Retorna dados da sessão.
+      parameters:
+        - name: "session_id"
+          in: "path"
+          description: "ID da sessão"
+          required: true
+          type: "integer"
       responses:
         200:
-          description: Array com todos usuários em forma de objeto
-          parameters:
-          - name: "session_id"
-            in: "path"
-            description: "ID da sessão"
-            required: true
-            type: "integer"
+          description: Resultado
           schema:
             type: object
+            required:
+              - success
+              - data
             properties:
               success:
                 type: boolean
                 description: sempre true em caso de sucesso
               data:
                 type: object
+                required:
+                  - name
                 properties:
-                  session_id:
+                  name:
                     type: string
-                    required: true
-                    example: "3909"
+                    example: "Sessão de uma hora"
+                    description: Nome da sessão
+                  active:
+                    type: boolean
+                    example: false
+                    description: Indica de a sessão está ativa
+                  end_at:
+                    type: "integer"
+                    example: 1537481191000
+                    description: Data de término da sessão (formato unix time)
+                  start_at:
+                    type: "integer"
+                    example: 1537491591000
+                    description: Data de início da sessão (formato unix time)
+                  resume:
+                    type: object
+                    properties:
+                      result:
+                        type: string
+                        enum:
+                          - "DRAW"
+                          - "YES"
+                          - "NO"
+                        description: Resultado da sessão, se caso null é porque a sessão está em andamento.
+                      yes:
+                        type: integer
+                        example: 1
+                        description: Quantidade de votos Sim
+                      no:
+                        type: integer
+                        example: 1
+                        description: Quantidade de votos Não
+                  votes:
+                    type: array
+                    description: Vetor contendo os votos da sessão
+                    items:
+                      type: object
+                      properties:
+                        option:
+                          type: string
+                          example: "NO"
+                          enum:
+                            - "YES"
+                            - "NO"
+                          description: Opção do voto
+                        name:
+                          type: string
+                          example: "Henrique"
+                          description: Nome do associado
+
+        400:
+          $ref: "#/definitions/bad_request"
 
   "/session/{session_id}/vote":
     post:
+      tags:
+        - "Sessão"
       summary: Lista todos os usuários.
       parameters:
-      - name: "session_id"
-        in: "path"
-        description: "ID da sessão"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "body"
-        required: true
-        schema:
-          type: object
-          properties:
-            session_id:
-              type: string
-              required: true
-              example: "3909"
-            option:
-              type: string
-              enum:
-                - "YES"
-                - "NO"
-              required: true
-              example: "YES"
+        - name: "session_id"
+          in: "path"
+          description: "ID da sessão"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            type: object
+            required:
+              - associate_id
+              - option
+            properties:
+              associate_id:
+                type: string
+                example: "3909"
+                description: ID do associado
+              option:
+                type: string
+                enum:
+                  - "YES"
+                  - "NO"
+                example: "YES"
+                description: Opção de voto do associado
       responses:
         204:
           description: Voto realizado com sucesso.
+        400:
+          $ref: "#/definitions/bad_request"
+
+definitions:
+  bad_request:
+    description: "Bad Request"
+    type: object
+    required:
+      - success
+      - messages
+    properties:
+      success:
+        type: boolean
+        example: false
+      messages:
+        type: array
+        items:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "\"name\" is required"
+            path:
+              type: array
+              items:
+                type: string
+                example: "body"
+            type:
+              type: string
+              example: "any.required"
+            context:
+              type: object
+              properties:
+                key:
+                  type: string
+                  example: "name"
+                label:
+                  type: string
+                  example: "name"
+
