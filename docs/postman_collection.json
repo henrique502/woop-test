@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "62f2d162-bf5d-43fa-85a8-0ae47f5e3f2b",
+		"name": "Woop-Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"teste 1 hora\",\n\t\"minutes\": 3600\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/session",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/session/:session_id/vote",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"associate_id\": 2,\n\t\"option\": \"YES\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/session/2/vote",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"session",
+						"2",
+						"vote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/session/:session_id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"teste\",\n\t\"minutes\": null\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/session/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"session",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

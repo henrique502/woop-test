@@ -2,7 +2,6 @@ const Joi = require('joi');
 const RouteValidator = require('../../middlewares/RouteValidator');
 
 class SessionSchema extends RouteValidator {
-
   static get get() {
     const schema = {
       params: Joi.object().keys({
@@ -23,6 +22,7 @@ class SessionSchema extends RouteValidator {
           .trim(),
         minutes: Joi.number()
           .integer()
+          .min(1)
           .default(1),
       }),
     };
