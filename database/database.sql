@@ -2,7 +2,9 @@ CREATE DATABASE IF NOT EXISTS `woop`
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `woop`.`settings` (
+USE `woop`;
+
+CREATE TABLE IF NOT EXISTS `settings` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(80) NOT NULL,
   `type` ENUM('BOOLEAN', 'NUMBER', 'FLOAT', 'STRING', 'OBJECT') NOT NULL,
@@ -13,18 +15,45 @@ CREATE TABLE IF NOT EXISTS `woop`.`settings` (
   UNIQUE INDEX `settings_name_UNIQUE` (`name` ASC)
 ) ENGINE = InnoDB;
 
-
-CREATE TABLE IF NOT EXISTS `woop`.`user` (
+CREATE TABLE IF NOT EXISTS `associate` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(500) NOT NULL,
-  `status` VARCHAR (7) NOT NULL DEFAULT 'VALID',
+  `name` VARCHAR(200) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `session` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NOT NULL,
+  `active` ENUM('YES', 'NO') NOT NULL,
+  `end_at` TIMESTAMP NOT NULL,
+  `start_at` TIMESTAMP NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
-INSERT INTO `woop`.`settings` (`name`, `type`, `value`) VALUES
-('LOG_BODY_BLACKLIST', 'OBJECT', '[\'password\']'),
-('CRON_EVERY_SECOND', 'STRING', '* * * * * *');
+CREATE TABLE IF NOT EXISTS `session_vote` (
+  `session_id` BIGINT(20) UNSIGNED NOT NULL,
+  `associate_id` BIGINT(20) UNSIGNED NOT NULL,
+  `option` ENUM('YES', 'NO') NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_session_vote_session_id FOREIGN KEY (`session_id`) REFERENCES `session`(`id`),
+  CONSTRAINT fk_session_vote_associate_id FOREIGN KEY (`associate_id`) REFERENCES `associate`(`id`)
+) ENGINE = InnoDB;
+
+
+INSERT INTO `settings` (`name`, `type`, `value`) VALUES
+('AUTO_CLOSE_SESSION_JOB', 'STRING', '* * * * *');
+
+INSERT INTO `associate` (`id`, `name`) VALUES
+('1', 'Henrique'),
+('2', 'Roberto'),
+('3', 'Fernanda'),
+('4', 'Ana'),
+('5', 'Lucas');
+
+
 

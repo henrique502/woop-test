@@ -4,28 +4,17 @@ const debug = require('debug')('worker');
 
 /* Dependencies */
 require('./config/i18n');
-const Cron = require('./helpers/Cron');
-
-/* Logger */
-const LoggerConfig = require('./config/LoggerConfig');
-const Logger = require('./helpers/Logger');
+const { CronJob } = require('cron');
+const Settings = require('./config/Settings');
 
 /* Crons */
-const EverySecond = require('./crons/EverySecond.js');
-
-/* Services */
-const services = [];
+const AutoCloseSessionJob = require('./crons/AutoCloseSessionJob.js');
 
 debug('load settings');
 (async () => {
   await Settings.load();
-  await LoggerConfig.init();
 
   debug('load workers');
-  Cron.add(Settings.get('CRON_EVERY_SECOND'), EverySecond.runner);
-
-  debug('start workers');
-  Cron.startAll();
-
-  debug(`Worker started ${services.length} services`);
+  const job = new CronJob(Settings.get('AUTO_CLOSE_SESSION_JOB'), AutoCloseSessionJob.runner, null, false, 'Etc/UTC');
+  job.start();
 })();

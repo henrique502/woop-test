@@ -17,11 +17,14 @@ class RouteValidator {
 
     const validation = Joi.validate(data, schema, {
       allowUnknown: true,
+      stripUnknown: true,
     });
 
     if (!validation.error) {
+      req.joi = validation.value;
       next();
     } else {
+
       res.status(400).send({
         success: false,
         messages: validation.error.details,

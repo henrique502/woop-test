@@ -1,5 +1,7 @@
 {
-  "helpers.logger.throw": "Falha interna do servidor",
-  "api.user.notFound": "Usuário não encontrado",
-  "cron.everySecond.tick": "Você verá esta mensagem a cada segundo"
+	"helpers.logger.throw": "Falha interna do servidor",
+	"api.session.vote.session_not_found": "Sessão não encontrada",
+	"api.session.vote.session_close": "Sessão já finalizada",
+	"api.session.vote.associate_not_found": "Associado não encontrado",
+	"api.session.vote.vote_found": "Voto já realizado"
 }

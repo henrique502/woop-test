@@ -29,5 +29,4 @@ const main = require('knex')(config);
 
 module.exports = {
   knex: main,
-  raw: main.raw, // alias to knex.raw
 };
