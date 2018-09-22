@@ -26,7 +26,7 @@ class SessionController {
       if (data.status === false) {
         res.send({
           success: false,
-          message: req.__('api.session.vote.not_found'),
+          message: req.__('api.session.vote.session_not_found'),
         });
         return;
       }
