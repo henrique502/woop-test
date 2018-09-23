@@ -3,5 +3,5 @@
 	"api.session.vote.session_not_found": "Session not found",
 	"api.session.vote.session_close": "Session already ended",
 	"api.session.vote.associate_not_found": "Associate not found",
-	"api.session.vote.vote_found": "Vote already done"
+	"api.session.vote.vote_found": "Vote already cast"
 }
