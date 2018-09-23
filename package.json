@@ -6,7 +6,9 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "worker": "node src/worker.js",
+    "dev": "nodemon src/app.js",
+    "test": "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -30,8 +32,11 @@
     "mysql2": "^1.6.1"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.2.0",
     "eslint": "^4.14.0",
     "eslint-config-airbnb-base": "^12.0.2",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^5.2.0"
   }
 }

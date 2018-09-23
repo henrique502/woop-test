@@ -1,6 +1,7 @@
 extends: airbnb-base
 plugins:
   - import
+  - mocha
 rules:
   arrow-body-style: 0
   no-underscore-dangle: 0
