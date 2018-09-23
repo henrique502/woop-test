@@ -55,3 +55,5 @@ debug('load settings');
     debug(`Server started on port ${process.env.PORT}`);
   });
 })();
+
+module.exports = app;
